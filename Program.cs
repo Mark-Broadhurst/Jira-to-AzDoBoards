@@ -191,6 +191,11 @@ namespace AzureBoardsMigration
                     },
                     new JsonPatchOperation
                     {
+                        Path = "/fields/System.AreaPath",
+                        Value = ResolveAreaPath(jira.CustomFields["DC Team"]?.Values[0], config["AzureDevOps:Project"])
+                    },
+                    new JsonPatchOperation
+                    {
                         Path = "/fields/System.AssignedTo",
                         Value = ResolveUser(jira.Assignee)
                     }
@@ -251,6 +256,13 @@ namespace AzureBoardsMigration
 
             Console.WriteLine($"Added {type}: {jira.Key}{title}");
 
+        }
+
+        private static object ResolveAreaPath(string value, string project)
+        {
+            return value == null 
+                ? null 
+                : $"{project}\\{value}";
         }
 
         private static string ResolveIteration(string[] sprints, string project)
